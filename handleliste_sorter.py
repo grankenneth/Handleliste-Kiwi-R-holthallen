@@ -16,20 +16,31 @@ category_order = [
     "Batterier"
 ]
 
-# Synonymer
+# Utvidet synonymliste
 synonyms = {
-    "Melk": "Meieriprodukter",
-    "Smør": "Meieriprodukter",
-    "Brelett": "Meieriprodukter",
-    "Yoghurt": "Meieriprodukter",
-    "Juice": "Saft og juice",
-    "Pølsebrød": "Brød",
-    "Gelatin": "Bakevarer",
-    "Sjokolade": "Skjokolade",
-    "Taco-kit": "Taco",
-    "Folie": "Aluminiumsfolie",
-    "Tørkepapir": "Papir",
-    "Tannbørste": "Tannkrem"
+    # Meieriprodukter
+    "Melk": "Meieriprodukter", "Smør": "Meieriprodukter", "Brelett": "Meieriprodukter",
+    "Yoghurt": "Meieriprodukter", "Fløte": "Meieriprodukter", "Rømme": "Meieriprodukter",
+    # Brus og drikke
+    "Villa Farris": "Brus", "Farris": "Brus", "Cola": "Brus", "Coca Cola": "Brus",
+    "Pepsi": "Brus", "Pepsi Max": "Brus", "Fanta": "Brus", "Solo": "Brus", "Sprite": "Brus",
+    "Mozell": "Brus", "Urge": "Brus", "Red Bull": "Brus", "Battery": "Brus", "Monster": "Brus",
+    "Burn": "Brus", "Capri-Sun": "Brus", "Bonaqua": "Brus", "Imsdal": "Brus", "Olden": "Brus",
+    # Saft og juice
+    "Juice": "Saft og juice", "Appelsinjuice": "Saft og juice", "Eplejuice": "Saft og juice",
+    # Brød og bakst
+    "Pølsebrød": "Brød", "Hamburgerbrød": "Brød", "Rundstykker": "Brød", "Baguette": "Brød",
+    "Kneipp": "Brød", "Polarbrød": "Brød", "Lomper": "Brød", "Tortilla": "Brød",
+    # Frysevarer
+    "Grandiosa": "Frossenpizza", "Pizza": "Frossenpizza", "Fiskepinner": "Fryst fisk",
+    "Laks": "Fryst fisk", "Torsk": "Fryst fisk",
+    # Snacks og godteri
+    "Potetgull": "Potetgull", "Chips": "Potetgull", "Sørlandschips": "Potetgull",
+    "Smash": "Snacks", "Stratos": "Skjokolade", "Kvikk Lunsj": "Skjokolade",
+    "Melkesjokolade": "Skjokolade", "Non Stop": "Skjokolade",
+    # Husholdning
+    "Tørkepapir": "Papir", "Dopapir": "Papir", "Zalo": "Vaskemidler", "Jif": "Vaskemidler",
+    "Folie": "Aluminiumsfolie", "Bakepapir": "Aluminiumsfolie"
 }
 
 # Alle kjente varer
@@ -63,17 +74,28 @@ if st.button("Sorter handleliste"):
         for item in unmatched_items:
             st.write(f"- {item}")
 
-    if st.button("Last ned som PDF"):
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Arial", size=12)
-        pdf.cell(200, 10, txt="Sortert handleliste", ln=True)
-        for item, category in sorted_items:
-            pdf.cell(200, 10, txt=f"{item} → {category}", ln=True)
-        if unmatched_items:
-            pdf.cell(200, 10, txt="Ikke gjenkjente varer:", ln=True)
-            for item in unmatched_items:
-                pdf.cell(200, 10, txt=f"- {item}", ln=True)
-        pdf.output("handleliste.pdf")
-        with open("handleliste.pdf", "rb") as f:
-            st.download_button("📄 Last ned PDF", f, file_name="handleliste.pdf")
+   
+if st.button("Last ned som PDF"):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    pdf.cell(200, 10, txt="Sortert handleliste", ln=True)
+    for item, category in sorted_items:
+        pdf.cell(200, 10, txt=f"{item} → {category}", ln=True)
+    if unmatched_items:
+        pdf.cell(200, 10, txt="Ikke gjenkjente varer:", ln=True)
+        for item in unmatched_items:
+            pdf.cell(200, 10, txt=f"- {item}", ln=True)
+
+    # Lagre PDF til en bytes-buffer
+    import io
+    pdf_buffer = io.BytesIO()
+    pdf.output(pdf_buffer)
+    pdf_buffer.seek(0)
+
+    st.download_button(
+        label="📄 Last ned PDF",
+        data=pdf_buffer,
+        file_name="handleliste.pdf",
+        mime="application/pdf"
+    )
